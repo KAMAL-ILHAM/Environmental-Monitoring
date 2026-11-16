@@ -15,7 +15,7 @@ const globalForGeo = globalThis as unknown as {
 };
 
 /**
- * PUT /api/sensor – dipanggil otomatis oleh browser laptop admin (?admin=1).
+ * PUT /api/sensor – dipanggil otomatis oleh browser pemilik alat (?key=...).
  */
 export async function PUT(req: NextRequest) {
   const adminKey = process.env.NEXT_PUBLIC_ADMIN_KEY;
@@ -28,6 +28,17 @@ export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
     const lat = Number(body?.latitude);
+    const lng = Number(body?.longitude);
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || (lat === 0 && lng === 0)) {
+      return NextResponse.json({ ok: false, error: "invalid_coordinates" }, { status: 400 });
+    }
+
+    globalForGeo.latestBrowserLocation = {
+      latitude: lat,
+      longitude: lng,
+      updatedAt: Date.now(),
+    };
 
     // Perbarui juga baris data terakhir di database agar koordinat langsung tampil di peta
     const latestRow = await prisma.sensorReading.findFirst({
