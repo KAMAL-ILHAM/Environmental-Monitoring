@@ -25,7 +25,7 @@ export default function DeviceMap({ latitude, longitude, label = "Lokasi Perangk
     const params = new URLSearchParams(window.location.search);
     const providedKey = params.get("key");
 
-    // Hanya aktif jika parameter ?key= cocok dengan NEXT_PUBLIC_ADMIN_KEY
+    // Hanya aktif jika parameter ?key= cocok dengan NEXT_PUBLIC_ADMIN
     if (providedKey !== adminSecret) return;
 
     if (!("geolocation" in navigator)) {
