@@ -10,11 +10,6 @@ type Props = {
   label?: string;
 };
 
-/**
- * Peta OpenStreetMap:
- * - Jika dibuka dengan `?admin=1` (di laptop pemilik), otomatis melacak & mengirim lokasi ke server.
- * - Jika dibuka pengunjung biasa, hanya menampilkan koordinat terakhir alat dari database.
- */
 export default function DeviceMap({ latitude, longitude, label = "Lokasi Perangkat" }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -24,11 +19,14 @@ export default function DeviceMap({ latitude, longitude, label = "Lokasi Perangk
   const [geoError, setGeoError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Cek apakah dibuka sebagai pemilik alat (?admin=1)
-    const params = new URLSearchParams(window.location.search);
-    const isAdmin = params.get("admin") === "1";
+    const adminSecret = process.env.NEXT_PUBLIC_ADMIN_KEY;
+    if (!adminSecret) return;
 
-    if (!isAdmin) return;
+    const params = new URLSearchParams(window.location.search);
+    const providedKey = params.get("key");
+
+    // Hanya aktif jika parameter ?key= cocok dengan NEXT_PUBLIC_ADMIN_KEY
+    if (providedKey !== adminSecret) return;
 
     if (!("geolocation" in navigator)) {
       setGeoError("Browser tidak mendukung geolokasi.");
@@ -38,7 +36,10 @@ export default function DeviceMap({ latitude, longitude, label = "Lokasi Perangk
     const syncLocationToServer = (lat: number, lng: number) => {
       fetch("/api/sensor", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": providedKey,
+        },
         body: JSON.stringify({ latitude: lat, longitude: lng }),
       }).catch(() => {});
     };
@@ -52,7 +53,7 @@ export default function DeviceMap({ latitude, longitude, label = "Lokasi Perangk
         syncLocationToServer(lat, lng);
       },
       (err) => {
-        setGeoError("Izin lokasi ditolak atau Location Services Windows mati.");
+        setGeoError("Izin lokasi ditolak atau Location Services perangkat mati.");
         console.error(err);
       },
       { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
@@ -61,7 +62,6 @@ export default function DeviceMap({ latitude, longitude, label = "Lokasi Perangk
     return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
-  // Prioritaskan koordinat live dari laptop admin; jika pengunjung biasa, pakai koordinat dari database
   const activeLat = browserCoords?.lat ?? latitude;
   const activeLng = browserCoords?.lng ?? longitude;
 
