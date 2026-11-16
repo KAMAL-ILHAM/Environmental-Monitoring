@@ -19,7 +19,7 @@ export default function DeviceMap({ latitude, longitude, label = "Lokasi Perangk
   const [geoError, setGeoError] = useState<string | null>(null);
 
   useEffect(() => {
-    const adminSecret = process.env.NEXT_PUBLIC_ADMIN_KEY;
+    const adminSecret = process.env.NEXT_PUBLIC_ADMIN;
     if (!adminSecret) return;
 
     const params = new URLSearchParams(window.location.search);
