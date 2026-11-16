@@ -18,7 +18,7 @@ const globalForGeo = globalThis as unknown as {
  * PUT /api/sensor – dipanggil otomatis oleh browser pemilik alat (?key=...).
  */
 export async function PUT(req: NextRequest) {
-  const adminKey = process.env.NEXT_PUBLIC_ADMIN_KEY;
+  const adminKey = process.env.NEXT_PUBLIC_ADMIN;
   const headerKey = req.headers.get("x-admin-key");
 
   if (!adminKey || headerKey !== adminKey) {
