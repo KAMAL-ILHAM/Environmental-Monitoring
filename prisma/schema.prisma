@@ -1,0 +1,32 @@
+// Skema database: setiap kiriman ESP32 disimpan sebagai satu baris (bukan hanya data terbaru).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SensorReading {
+  id          Int      @id @default(autoincrement())
+  /// Identitas perangkat ESP32 (DEVICE_ID pada config.h)
+  deviceId    String   @db.VarChar(64)
+  /// Suhu dalam °C
+  temperature Float
+  /// Kelembapan relatif dalam %
+  humidity    Float
+  /// Koordinat aktual perangkat; NULL jika ESP32 tidak mengirim koordinat
+  latitude    Float?
+  longitude   Float?
+  /// Waktu pengukuran. Sama dengan receivedAt untuk data langsung;
+  /// lebih awal jika data sempat tertahan di antrean ESP32 saat koneksi terputus.
+  measuredAt  DateTime @db.Timestamptz(3)
+  /// Waktu data diterima & disimpan oleh backend
+  receivedAt  DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([deviceId, measuredAt(sort: Desc)])
+  @@index([measuredAt(sort: Desc)])
+  @@map("sensor_readings")
+}

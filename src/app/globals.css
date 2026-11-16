@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  @apply bg-slate-50 text-slate-800 antialiased;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Penanda lokasi perangkat pada peta Leaflet (tanpa gambar eksternal) */
+.device-marker span {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #0891b2;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 5px rgba(8, 145, 178, 0.25), 0 2px 6px rgba(15, 23, 42, 0.35);
+}
+
+.leaflet-container {
+  font-family: inherit;
+  border-radius: 0.75rem;
+}

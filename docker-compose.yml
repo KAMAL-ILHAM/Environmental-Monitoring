@@ -1,0 +1,24 @@
+# PostgreSQL lokal untuk pengembangan.
+#   docker compose up -d
+# Kredensial sama dengan DATABASE_URL pada .env.example.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: esp32-monitor-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: esp32_monitor
+    ports:
+      - "5432:5432"
+    volumes:
+      - esp32_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d esp32_monitor"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  esp32_pgdata:
