@@ -144,7 +144,7 @@ export function Dashboard() {
           </div>
           <div>
             <h1 className="text-lg font-semibold leading-tight text-slate-900">Environmental Monitoring</h1>
-            <p className="text-xs text-slate-500">ESP32 + DHT22 · data langsung dari database</p>
+            <p className="text-xs text-slate-500">ESP32 + DHT22</p>
           </div>
         </div>
 
