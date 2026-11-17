@@ -23,7 +23,7 @@ const DeviceMap = dynamic(() => import("./DeviceMap"), {
 });
 
 /** Interval pembaruan otomatis (ms). Tidak ada reload halaman. */
-const POLL_INTERVAL_MS = 3000;
+const POLL_INTERVAL_MS = 1500;
 const HISTORY_PAGE_SIZE = 15;
 
 export function Dashboard() {
